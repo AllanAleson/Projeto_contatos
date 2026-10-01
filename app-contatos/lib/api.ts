@@ -1,12 +1,12 @@
 import axios from "axios";
-import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
 
 export const BASE_URL = (
   process.env.EXPO_PUBLIC_API_URL ||
-  (Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000")
+  "https://api-contatos-auth-04-09-25.onrender.com"
 ).replace(/\/$/, "");
-const api = axios.create({ baseURL: BASE_URL, timeout: 15000 });
+// O serviço no Render pode precisar de alguns segundos para despertar após ficar ocioso.
+const api = axios.create({ baseURL: BASE_URL, timeout: 60000 });
 const KEY = "contatos.jwt";
 let currentToken: string | null = null;
 let onUnauthorized: (() => void) | undefined;
@@ -19,32 +19,20 @@ const applyToken = (token: string | null) => {
   if (token) api.defaults.headers.common.Authorization = `Bearer ${token}`;
   else delete api.defaults.headers.common.Authorization;
 };
-// SecureStore não existe no navegador. Na web, a sessão dura até fechar a aba.
 export async function setAuthToken(token: string) {
-  if (Platform.OS === "web") {
-    if (typeof sessionStorage !== "undefined")
-      sessionStorage.setItem(KEY, token);
-  } else
-    await SecureStore.setItemAsync(KEY, token, {
-      keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK,
-    });
+  await SecureStore.setItemAsync(KEY, token, {
+    keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK,
+  });
   applyToken(token);
 }
 export async function loadAuthToken() {
-  const token =
-    Platform.OS === "web"
-      ? typeof sessionStorage !== "undefined"
-        ? sessionStorage.getItem(KEY)
-        : null
-      : await SecureStore.getItemAsync(KEY);
+  const token = await SecureStore.getItemAsync(KEY);
   applyToken(token);
   return token;
 }
 export async function clearAuthToken() {
   applyToken(null);
-  if (Platform.OS === "web") {
-    if (typeof sessionStorage !== "undefined") sessionStorage.removeItem(KEY);
-  } else await SecureStore.deleteItemAsync(KEY);
+  await SecureStore.deleteItemAsync(KEY);
 }
 api.interceptors.response.use(
   (response) => response,

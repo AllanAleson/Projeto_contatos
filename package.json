@@ -12,7 +12,6 @@
   "scripts": {
     "setup": "node scripts/setup.mjs",
     "app": "npm run start --workspace app-contatos",
-    "web": "npm run web --workspace app-contatos",
     "api": "npm run dev --workspace contatos-api",
     "check": "npm run typecheck --workspace app-contatos && npm run check --workspace contatos-api",
     "test": "npm run test --workspace contatos-api"

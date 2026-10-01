@@ -6,7 +6,7 @@ Projeto baseado no PDF **App Contatos com Auth v3 2.pdf**. Inclui o aplicativo e
 
 - Cadastro e login com senha criptografada por hash bcrypt e JWT com duração de 7 dias.
 - Rotas protegidas com Expo Router e encerramento da sessão em respostas 401.
-- Token em SecureStore no Android/iOS. No navegador, sessionStorage (a sessão termina ao fechar a aba; não possui a mesma proteção do SecureStore).
+- Token em SecureStore no Android/iOS. Por isso, o aplicativo deve ser executado no Expo Go e não no modo web.
 - Listar, buscar, cadastrar, editar e excluir contatos com confirmação.
 - Nome obrigatório; telefone, e-mail, endereço e foto opcionais.
 - Seleção de foto, prévia, upload multipart no campo `foto`, armazenamento no GridFS e exibição autenticada.
@@ -16,7 +16,7 @@ Projeto baseado no PDF **App Contatos com Auth v3 2.pdf**. Inclui o aplicativo e
 
 ## 1. Preparar
 
-Instale **Node.js 22.13 ou superior** (Node 24 também funciona). Para o banco, use Docker Desktop ou uma instância MongoDB sua.
+Instale **Node.js 22.13 ou superior** (Node 24 também funciona). Docker e MongoDB só são necessários se você quiser executar uma API local em vez da API hospedada.
 
 Extraia o ZIP, abra a pasta `projeto-contatos` no VS Code e execute no terminal dessa pasta:
 
@@ -27,7 +27,9 @@ npm run setup
 
 O setup cria `api/.env` com uma chave JWT aleatória e `app-contatos/.env` com o endereço da API. Ele não sobrescreve configurações existentes. Não envie o `.env` para o Git.
 
-## 2. Ligar o MongoDB
+## 2. Ligar o MongoDB (opcional)
+
+Esta etapa e a próxima são necessárias apenas para desenvolver ou testar a API local.
 
 Com o Docker Desktop aberto, na pasta principal:
 
@@ -39,7 +41,7 @@ O volume mantém os dados entre reinicializações. O banco fica acessível some
 
 Se já usa MongoDB local ou Atlas, não precisa do Docker. Ajuste `MONGODB_URI` em `api/.env` com a sua conexão; inclua o nome do banco no caminho. Nenhuma conta ou credencial de banco externo foi criada para você.
 
-## 3. Iniciar a API
+## 3. Iniciar a API local (opcional)
 
 No primeiro terminal, na pasta principal:
 
@@ -49,38 +51,25 @@ npm run api
 
 Mantenha esse terminal aberto. A API informa `http://localhost:3000`. Abra `http://localhost:3000/health`: deve aparecer `{"status":"ok"}`.
 
-## 4. Abrir o aplicativo
+Para conectar o aplicativo a essa API local, substitua temporariamente `EXPO_PUBLIC_API_URL` em `app-contatos/.env` pelo endereço acessível a partir do aparelho.
 
-### Navegador — caminho mais direto para testar
+## 4. Abrir o aplicativo no Expo Go
 
-Abra um segundo terminal na pasta principal:
+O aplicativo usa a API hospedada abaixo, já configurada em `app-contatos/.env`:
 
-```powershell
-npm run web
+```dotenv
+EXPO_PUBLIC_API_URL=https://api-contatos-auth-04-09-25.onrender.com
 ```
 
-Acesse o endereço mostrado pelo Expo, normalmente `http://localhost:8081`. Clique em **Criar uma conta**, cadastre-se e depois faça login. Não há usuário ou senha padrão.
-
-### Android/iOS
-
-Antes de iniciar, ajuste `EXPO_PUBLIC_API_URL` em `app-contatos/.env`:
-
-| Onde o app roda                    | URL da API              |
-| ---------------------------------- | ----------------------- |
-| Navegador no próprio PC            | `http://localhost:3000` |
-| Emulador Android do Android Studio | `http://10.0.2.2:3000`  |
-| Simulador iOS no Mac               | `http://localhost:3000` |
-| Celular físico                     | `http://IP_DO_PC:3000`  |
-
-No Windows, use `ipconfig` para encontrar o IPv4 da conexão Wi-Fi. Exemplo de configuração: `EXPO_PUBLIC_API_URL=http://192.168.0.10:3000`. Use o IP real da sua máquina. Celular e PC precisam estar na mesma rede, e o firewall deve permitir a API na rede privada. Primeiro teste `/health` no navegador do celular.
-
-Depois:
+Inicie o Expo na pasta principal:
 
 ```powershell
 npm run app
 ```
 
-O projeto está fixado no **Expo SDK 55**. Use uma versão do Expo Go compatível com esse SDK, ou um development build. O Expo Go instalado na loja pode exigir outro SDK. Para emulador Android, com o ambiente Android configurado, pressione `a`. Não foi gerado APK/IPA neste pacote.
+Leia o QR code com o Expo Go no celular. Clique em **Criar uma conta**, cadastre-se e depois faça login. Não há usuário ou senha padrão.
+
+O projeto está fixado no **Expo SDK 55**. Use uma versão do Expo Go compatível com esse SDK, ou um development build. Este projeto usa `expo-secure-store` e não oferece suporte ao modo web. Para emulador Android, com o ambiente Android configurado, pressione `a`. Não foi gerado APK/IPA neste pacote.
 
 Após mudar o `.env`, reinicie o Expo; se precisar limpar o cache:
 
