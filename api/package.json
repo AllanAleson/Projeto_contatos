@@ -1,0 +1,28 @@
+{
+  "name": "contatos-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch --env-file=.env src/server.js",
+    "start": "node --env-file=.env src/server.js",
+    "check": "node --check src/app.js && node --check src/server.js",
+    "test": "node --test --test-concurrency=1"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "mongodb": "^6.20.0",
+    "bcryptjs": "^3.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "cors": "^2.8.5",
+    "helmet": "^8.1.0",
+    "multer": "^2.0.2",
+    "express-rate-limit": "^8.1.0",
+    "zod": "^4.1.0",
+    "file-type": "^21.0.0"
+  },
+  "devDependencies": {
+    "supertest": "^7.1.4",
+    "mongodb-memory-server": "^10.2.0"
+  }
+}

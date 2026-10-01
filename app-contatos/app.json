@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Contatos",
+    "slug": "app-contatos",
+    "version": "1.0.0",
+    "scheme": "contatos",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.exemplo.contatos"
+    },
+    "android": { "package": "com.exemplo.contatos" },
+    "web": { "bundler": "metro", "output": "single" },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Permitir que Contatos escolha uma foto da galeria.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ]
+    ]
+  }
+}
